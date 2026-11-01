@@ -79,12 +79,20 @@
     } catch (e) { console.error(e); }
   }, true);
 
-  // Sur téléphone, l'aperçu est sous la zone de choix : on y descend dès qu'un document s'ouvre.
+  // L'image avant tout : la mise en page plein écran se pose avant que le lecteur mesure son espace.
   document.addEventListener("DOMContentLoaded", () => {
-    const entete = document.querySelector("#entete");
-    new MutationObserver(() => entete.closest("section").scrollIntoView())
-      .observe(entete, { childList: true });
+    const panneau = document.querySelector("#panneau");
+    new MutationObserver(() => document.body.classList.toggle("visuel", !panneau.hidden))
+      .observe(panneau, { attributes: true, attributeFilter: ["hidden"] });
+    document.querySelector("#fermer").onclick = () => { window.__lecteurRetour(); };
+    document.querySelector("#dossier").onclick = () => pont.choisirDossier();
   });
+  window.__lecteurRetour = () => {
+    const panneau = document.querySelector("#panneau");
+    if (panneau.hidden) return false;
+    panneau.hidden = true;
+    return true;
+  };
 
   // Fichiers reçus par « Ouvrir avec » ou « Partager ».
   window.__lecteurOuvrir = async (liste) => {

@@ -11,6 +11,8 @@ Conçue par [Jérémy Gonin](https://jeremyai.fr), coach en intelligence artific
 ## Ce qu'elle fait
 
 - Ouvre un fichier depuis l'application, ou depuis « Ouvrir avec » et « Partager » dans n'importe quelle autre application.
+- Affiche aussitôt l'image du fichier en plein écran, avec zoom à deux doigts.
+- Ouvre un dossier entier, sous-dossiers compris, jusqu'à 100 fichiers.
 - Reconnaît le vrai format d'après le contenu, même si l'extension est fausse.
 - Convertit vers PDF, Word, images, CSV ou STL selon le fichier.
 - Affiche toujours quelque chose : si un lecteur échoue, une lecture minimale prend le relais.
@@ -42,8 +44,8 @@ Les fichiers d'essai ne sont pas publiés dans ce dépôt.
 
 Prototype 0.1.0, testé sur émulateur Android 15. Limites connues :
 
-- Certains plans DWG complexes ne s'ouvrent pas et passent en lecture minimale.
-- Le zoom à deux doigts et les très gros fichiers restent à vérifier sur un vrai téléphone.
+- Certains plans DWG complexes ne s'ouvrent pas en entier : l'application montre alors la petite image enregistrée dans le fichier.
+- Les très gros fichiers restent à vérifier sur un vrai téléphone.
 
 ## Licence
 

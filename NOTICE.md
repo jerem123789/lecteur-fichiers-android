@@ -27,3 +27,6 @@ Le code compilé peut contenir d'autres bibliothèques non identifiées. Si vous
 - `js/lib-45FWJP6G.js` : correction de l'ouverture des e-mails `.msg`.
 - `js/lib-JMNYUMEN.js` : moteur DWG remis à zéro après un plantage, texte d'aide tactile.
 - `js/main.js` : message affiché après une conversion.
+- `js/lib-5A73KNPL.js` : zoom à deux doigts sur les plans et les images.
+- `js/lib-JMNYUMEN.js` : recours à l'image intégrée au DWG (`js/apercu-dwg.js`) si le plan est trop complexe.
+- `index.html` et `style.css` : bouton Dossier et affichage plein écran.

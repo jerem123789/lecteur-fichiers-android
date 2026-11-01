@@ -176,3 +176,28 @@ pre.brut { white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.45 Conso
   body.impression .feuille td { border-color: #999; }
   body.impression .mail { color: #000; background: #fff; }
 }
+
+/* Application Android : dès qu'un fichier arrive, l'image occupe tout l'écran */
+.ouvrir-dossier { display: block; width: 100%; margin-top: 10px; padding: 12px; font-weight: 600; }
+.fermer { display: none; }
+@media screen {
+  body.visuel { height: 100dvh; min-height: 0; overflow: hidden; }
+  body.visuel .haut, body.visuel .zone, body.visuel .bas, body.visuel .ouvrir-dossier { display: none; }
+  body.visuel main { padding: 0; max-width: none; height: 100%; display: flex; flex-direction: column; min-height: 0; }
+  body.visuel .liste { flex: none; padding: 6px 52px 6px 8px; }
+  body.visuel .puce { min-width: 110px; padding: 3px 10px; }
+  body.visuel .puce small { display: none; }
+  body.visuel .panneau { flex: 1; min-height: 0; margin: 0; border: 0; border-radius: 0; display: flex; flex-direction: column; }
+  body.visuel .apercu { order: 1; flex: 1; min-height: 0; height: auto; max-height: none; }
+  body.visuel .etat { order: 2; flex: none; }
+  body.visuel .etat:not(.ok):not(.erreur) { display: none; }
+  body.visuel .barre { order: 3; flex: none; padding: 6px 8px; border-top: 1px solid var(--bord); border-bottom: 0; display: block; }
+  body.visuel .entete h2 { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  body.visuel .entete p { display: none; }
+  body.visuel .actions { flex-wrap: nowrap; overflow-x: auto; margin-top: 4px; }
+  body.visuel .actions button { flex: none; white-space: nowrap; padding: 6px 12px; font-size: 13px; }
+  body.visuel .apercu.media video { max-height: 100%; }
+  body.visuel .apercu.pages { padding: 6px; gap: 8px; }
+  body.visuel .fermer { display: block; position: fixed; top: calc(var(--marge-haut, 0px) + 6px); right: 8px; z-index: 5; width: 40px; height: 40px;
+    padding: 0; border-radius: 50%; background: rgba(0,0,0,.6); border-color: transparent; color: #fff; font-size: 18px; }
+}

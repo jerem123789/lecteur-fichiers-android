@@ -10,6 +10,7 @@ import android.print.PageRange
 import android.print.PrintAttributes
 import android.print.PrintDocumentAdapter
 import android.print.PrintManager
+import android.provider.DocumentsContract
 import android.provider.OpenableColumns
 import android.util.Base64
 import android.util.Log
@@ -26,6 +27,7 @@ import android.webkit.WebViewClient
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -40,6 +42,7 @@ import java.util.concurrent.atomic.AtomicInteger
 private const val HOTE = "appassets.androidplatform.net"
 private const val ORIGINE = "https://$HOTE"
 private const val PREFIXE_ENTRANT = "/__entrant/"
+private const val MAX_FICHIERS_DOSSIER = 100
 
 // Même politique que public/_headers sur le site.
 private const val CSP = "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-eval'; " +
@@ -70,6 +73,21 @@ class MainActivity : ComponentActivity() {
     private val choisir = registerForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
         rappelChoix?.onReceiveValue(uris.toTypedArray())
         rappelChoix = null
+    }
+
+    private val choisirDossier = registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { arbre ->
+        if (arbre == null) return@registerForActivityResult
+        Thread {
+            val fichiers = mutableListOf<Pair<Uri, String>>()
+            parcourir(arbre, DocumentsContract.getTreeDocumentId(arbre), fichiers)
+            runOnUiThread {
+                if (fichiers.size >= MAX_FICHIERS_DOSSIER) {
+                    Toast.makeText(this, "Dossier limité aux $MAX_FICHIERS_DOSSIER premiers fichiers", Toast.LENGTH_LONG).show()
+                }
+                fichiers.sortedBy { it.second.lowercase() }.forEach { (uri, nom) -> ajouter(uri, nom, "") }
+                livrer()
+            }
+        }.start()
     }
 
     private val enregistrer = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { resultat ->
@@ -105,6 +123,13 @@ class MainActivity : ComponentActivity() {
             insets
         }
         File(cacheDir, "sorties").deleteRecursively()
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                web.evaluateJavascript("window.__lecteurRetour()") { ferme ->
+                    if (ferme != "true") finish()
+                }
+            }
+        })
         web.loadUrl("$ORIGINE/index.html")
         recevoir(intent)
     }
@@ -212,16 +237,36 @@ class MainActivity : ComponentActivity() {
             Intent.ACTION_SEND_MULTIPLE -> flux2(intent)
             else -> emptyList()
         }
-        for (uri in uris) {
-            val id = compteur.incrementAndGet().toString()
-            val nom = nomDe(uri)
-            val type = intent?.type ?: contentResolver.getType(uri) ?: "application/octet-stream"
-            entrants[id] = Entrant(uri, nom, "application/octet-stream")
-            enAttente += JSONObject().put("url", PREFIXE_ENTRANT + id).put("nom", nom).put("type", type)
-        }
+        for (uri in uris) ajouter(uri, nomDe(uri), intent?.type ?: contentResolver.getType(uri).orEmpty())
         // Évite de rouvrir le même fichier si Android recrée l'écran.
         intent?.action = Intent.ACTION_MAIN
         livrer()
+    }
+
+    private fun ajouter(uri: Uri, nom: String, type: String) {
+        val id = compteur.incrementAndGet().toString()
+        entrants[id] = Entrant(uri, nom, "application/octet-stream")
+        enAttente += JSONObject().put("url", PREFIXE_ENTRANT + id).put("nom", nom).put("type", type)
+    }
+
+    private fun parcourir(arbre: Uri, parent: String, fichiers: MutableList<Pair<Uri, String>>) {
+        val enfants = DocumentsContract.buildChildDocumentsUriUsingTree(arbre, parent)
+        val colonnes = arrayOf(
+            DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+            DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+            DocumentsContract.Document.COLUMN_MIME_TYPE,
+        )
+        contentResolver.query(enfants, colonnes, null, null, null)?.use { curseur ->
+            while (curseur.moveToNext() && fichiers.size < MAX_FICHIERS_DOSSIER) {
+                val id = curseur.getString(0)
+                val nom = curseur.getString(1)
+                when {
+                    nom.startsWith(".") -> Unit
+                    curseur.getString(2) == DocumentsContract.Document.MIME_TYPE_DIR -> parcourir(arbre, id, fichiers)
+                    else -> fichiers += DocumentsContract.buildDocumentUriUsingTree(arbre, id) to nom
+                }
+            }
+        }
     }
 
     @Suppress("DEPRECATION")
@@ -306,6 +351,9 @@ class MainActivity : ComponentActivity() {
                 enregistrerSuivant()
             }
         }
+
+        @JavascriptInterface
+        fun choisirDossier() = runOnUiThread { this@MainActivity.choisirDossier.launch(null) }
 
         @JavascriptInterface
         fun imprimer(titre: String) = runOnUiThread { this@MainActivity.imprimer(titre) }
