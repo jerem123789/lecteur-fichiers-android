@@ -1,0 +1,12 @@
+.gradle/
+.kotlin/
+build/
+local.properties
+*.apk
+*.jks
+*.keystore
+keystore.properties
+.DS_Store
+# Fichiers d'essai : tiers, parfois issus de vrais e-mails
+tests/fichiers/
+__pycache__/

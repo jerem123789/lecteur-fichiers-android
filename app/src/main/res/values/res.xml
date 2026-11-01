@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lecteur de fichiers</string>
+    <color name="bleu">#0B5CAD</color>
+    <style name="Theme.Lecteur" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/bleu</item>
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
+</resources>

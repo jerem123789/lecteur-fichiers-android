@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Lecteur de fichiers</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='5' y='2' width='22' height='28' rx='3' fill='%230b5cad'/%3E%3Cpath d='M10 12h12M10 17h12M10 22h8' stroke='white' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="haut">
+  <div class="marque">
+    <h1>Lecteur de fichiers</h1>
+    <p>Ouvrez un plan DWG, un document, une image, une vidéo ou un e-mail, puis convertissez-le en PDF, Word ou image. Tout reste sur votre téléphone.</p>
+  </div>
+  <div class="cadenas" title="La conversion se fait sur votre téléphone. Les fichiers ne sont envoyés à aucun serveur.">🔒 Vos fichiers ne quittent pas votre téléphone</div>
+</header>
+
+<main>
+  <div id="zone" class="zone" tabindex="0" role="button" aria-label="Choisir des fichiers">
+    <strong>Touchez ici pour choisir vos fichiers</strong>
+    <span>ou utilisez « Ouvrir avec » et « Partager » depuis une autre application</span>
+    <small>DWG · DXF · STEP 3D · PDF · Illustrator · Photoshop · EPS · SVG · boîtes Outlook PST · Word · Excel · PowerPoint · images (y compris HEIC iPhone et TIFF) · vidéos · audio · e-mails Outlook · ZIP · texte</small>
+  </div>
+  <input id="choix" type="file" multiple hidden>
+
+  <nav id="liste" class="liste" hidden></nav>
+
+  <section id="panneau" class="panneau" hidden>
+    <div class="barre">
+      <div id="entete" class="entete"></div>
+      <div id="actions" class="actions"></div>
+    </div>
+    <div id="etat" class="etat" role="status"></div>
+    <div id="apercu" class="apercu"></div>
+  </section>
+</main>
+
+<footer class="bas">Tout est traité sur votre téléphone, même sans connexion : idéal pour les plans et documents clients confidentiels.</footer>
+<script src="js/polyfills.js"></script>
+<script src="js/android.js"></script>
+<script type="module" src="js/main.js?v=mvumr8ex"></script>
+</body>
+</html>

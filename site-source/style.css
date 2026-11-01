@@ -1,0 +1,178 @@
+:root {
+  --fond: #f3f5f8; --carte: #ffffff; --texte: #1b2430; --doux: #5d6b7c; --bord: #dde3ea;
+  --accent: #0b5cad; --accent-fort: #084a8c; --accent-doux: #e6f0fa; --ok: #1d7a46; --ok-doux: #e5f4ec;
+  --erreur: #b42318; --erreur-doux: #fdecea; --zone: #f9fbfd; --papier: #e9edf2;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fond: #11161c; --carte: #1a2129; --texte: #e6ebf0; --doux: #9aa7b5; --bord: #2c3642;
+    --accent: #5ea8f2; --accent-fort: #8cc2f7; --accent-doux: #16304a; --ok: #5cc98b; --ok-doux: #15301f;
+    --erreur: #f07a6e; --erreur-doux: #3a1b18; --zone: #151b22; --papier: #0d1116;
+  }
+}
+:root[data-theme="dark"] {
+  --fond: #11161c; --carte: #1a2129; --texte: #e6ebf0; --doux: #9aa7b5; --bord: #2c3642;
+  --accent: #5ea8f2; --accent-fort: #8cc2f7; --accent-doux: #16304a; --ok: #5cc98b; --ok-doux: #15301f;
+  --erreur: #f07a6e; --erreur-doux: #3a1b18; --zone: #151b22; --papier: #0d1116;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--fond); color: var(--texte); font: 15px/1.5 "Segoe UI", system-ui, sans-serif; min-height: 100vh;
+       display: flex; flex-direction: column; }
+button { font: inherit; border-radius: 8px; border: 1px solid var(--bord); background: var(--carte); color: var(--texte);
+         padding: 7px 14px; cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button.principal { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+button.principal:hover { background: var(--accent-fort); }
+button.discret { border-color: transparent; background: transparent; color: var(--doux); }
+button:disabled { opacity: .55; cursor: progress; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.haut { max-width: 1200px; width: 100%; margin: 0 auto; padding: 28px 16px 8px; display: flex; flex-wrap: wrap; gap: 12px 24px;
+        align-items: flex-end; justify-content: space-between; }
+.marque h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -.01em; }
+.marque p { margin: 0; color: var(--doux); max-width: 640px; }
+.cadenas { font-size: 13px; color: var(--ok); background: var(--ok-doux); padding: 4px 12px; border-radius: 99px; white-space: nowrap; }
+
+main { max-width: 1200px; width: 100%; margin: 0 auto; padding: 16px; flex: 1; }
+.zone { border: 2px dashed var(--bord); border-radius: 14px; background: var(--zone); padding: 30px 16px; text-align: center;
+        cursor: pointer; transition: border-color .15s, background .15s; display: flex; flex-direction: column; gap: 4px; }
+.zone.survol, .zone:hover { border-color: var(--accent); background: var(--accent-doux); }
+.zone strong { font-size: 18px; }
+.zone span { color: var(--doux); font-size: 14px; }
+.zone small { color: var(--doux); font-size: 12px; margin-top: 6px; }
+
+.liste { display: flex; gap: 8px; overflow-x: auto; padding: 14px 0 4px; }
+.puce { display: flex; flex-direction: column; align-items: flex-start; min-width: 150px; max-width: 240px; padding: 8px 12px; text-align: left; }
+.puce span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; font-weight: 600; font-size: 14px; }
+.puce small { color: var(--doux); font-size: 12px; }
+.puce.active { border-color: var(--accent); background: var(--accent-doux); }
+
+.panneau { margin-top: 14px; background: var(--carte); border: 1px solid var(--bord); border-radius: 14px; overflow: hidden; }
+.barre { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; justify-content: space-between; padding: 14px 16px;
+         border-bottom: 1px solid var(--bord); }
+.entete { min-width: 0; }
+.entete h2 { margin: 0; font-size: 17px; overflow-wrap: anywhere; }
+.entete p { margin: 0; color: var(--doux); font-size: 13px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.etat { font-size: 13px; color: var(--doux); padding: 0 16px; min-height: 0; }
+.etat:not(:empty) { padding: 8px 16px; border-bottom: 1px solid var(--bord); }
+.etat.ok { color: var(--ok); background: var(--ok-doux); }
+.etat.erreur { color: var(--erreur); background: var(--erreur-doux); }
+
+.apercu { background: var(--papier); min-height: 420px; max-height: 78vh; overflow: auto; position: relative; }
+.chargement { padding: 60px; text-align: center; color: var(--doux); }
+.info { margin: 24px auto; max-width: 640px; padding: 18px 20px; background: var(--carte); border: 1px solid var(--bord); border-radius: 10px; }
+.info.erreur { border-color: var(--erreur); }
+.info p { margin: 6px 0 0; color: var(--doux); }
+
+/* Plans et images : zoom et déplacement */
+.apercu.plan { background: #fff; overflow: hidden; height: 72vh; cursor: grab; touch-action: none; }
+.apercu.plan:active { cursor: grabbing; }
+.apercu.plan > img, .apercu.plan > canvas { position: absolute; inset: 0; margin: auto; max-width: 100%; max-height: 100%;
+  width: auto; height: auto; transform-origin: 0 0; user-select: none; }
+.apercu.plan > img { width: 100%; height: 100%; object-fit: contain; }
+
+/* Modèles 3D */
+.apercu.vue3d { background: #fff; height: 72vh; overflow: hidden; touch-action: none; }
+.apercu.vue3d canvas { display: block; }
+.vues { position: absolute; top: 10px; left: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.vues button { background: rgba(255,255,255,.92); color: #1b2430; border-color: #c9d0d8; padding: 4px 10px; font-size: 13px; }
+
+/* PDF */
+.apercu.pages { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 18px; }
+.page { max-width: 100%; height: auto; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.18); }
+
+/* Documents */
+.apercu.document { padding: 0; }
+.apercu.document .docx-wrapper { background: var(--papier); padding: 20px 0; }
+.page-html { width: 100%; min-height: 70vh; border: 0; background: #fff; display: block; }
+.apercu.texte pre { margin: 0; padding: 18px 20px; font: 13px/1.5 Consolas, "Cascadia Mono", monospace; white-space: pre-wrap;
+  overflow-wrap: anywhere; background: var(--carte); min-height: 100%; }
+
+/* Tableurs */
+.apercu.tableur { background: var(--carte); }
+.onglets { position: sticky; top: 0; display: flex; gap: 4px; padding: 8px; background: var(--carte); border-bottom: 1px solid var(--bord);
+  overflow-x: auto; z-index: 1; }
+.onglets button { padding: 4px 12px; font-size: 13px; white-space: nowrap; }
+.onglets button.active { background: var(--accent-doux); border-color: var(--accent); }
+.feuille { padding: 8px; overflow: auto; }
+.feuille table { border-collapse: collapse; font-size: 13px; }
+.feuille td { border: 1px solid var(--bord); padding: 3px 8px; white-space: nowrap; }
+.feuille tr:first-child td { background: var(--fond); font-weight: 600; }
+
+/* Présentations, médias, e-mails, archives */
+.apercu.presentation { padding: 16px; display: flex; justify-content: center; }
+.apercu.media { display: flex; align-items: center; justify-content: center; padding: 20px; background: #000; }
+.apercu.media video { max-width: 100%; max-height: 70vh; }
+.apercu.media audio { width: min(600px, 100%); }
+.mail { max-width: 900px; margin: 0 auto; padding: 20px; background: var(--carte); min-height: 100%; }
+.mail h3 { margin: 0 0 10px; font-size: 19px; }
+.mail table { font-size: 13px; margin-bottom: 14px; border-collapse: collapse; }
+.mail th { text-align: left; color: var(--doux); padding: 2px 12px 2px 0; font-weight: 600; vertical-align: top; }
+.mail .corps { border-top: 1px solid var(--bord); padding-top: 12px; }
+.mail .corps pre { white-space: pre-wrap; font: inherit; margin: 0; }
+.mail .page-html { min-height: 200px; }
+.pj, .archive { display: flex; flex-direction: column; gap: 6px; margin-top: 16px; }
+.pj > div, .archive > div { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.archive { max-width: 900px; margin: 0 auto; padding: 20px; background: var(--carte); min-height: 100%; }
+.archive > div span { flex: 1; min-width: 200px; overflow-wrap: anywhere; font-size: 14px; }
+
+/* Lecture du texte (anciens formats) et lecture minimale */
+.page-texte { max-width: 860px; margin: 18px auto; padding: 36px 44px; background: var(--carte); box-shadow: 0 1px 4px rgba(0,0,0,.15); }
+.page-texte p { margin: 0 0 .6em; white-space: pre-wrap; }
+.page-texte h3.diapo { margin: 1.6em 0 .6em; padding-top: .6em; border-top: 2px solid var(--bord); color: var(--accent); }
+.page-texte .vignette { display: block; max-width: 260px; margin: 0 auto 20px; border: 1px solid var(--bord); }
+.page-texte .info { margin: 0 0 18px; max-width: none; }
+pre.brut { white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.45 Consolas, monospace; background: var(--fond);
+  padding: 12px; border-radius: 8px; max-height: 60vh; overflow: auto; margin: 0 16px 16px; }
+.page-texte pre.brut { margin: 0 0 12px; }
+.integrees { display: flex; flex-wrap: wrap; gap: 12px; }
+.integrees figure { margin: 0; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.integrees img { max-width: 240px; max-height: 200px; border: 1px solid var(--bord); background: #fff; }
+.integrees figcaption { font-size: 12px; color: var(--doux); }
+
+/* Boîtes Outlook */
+.apercu.pst { display: grid; grid-template-columns: 220px 320px 1fr; height: 75vh; max-height: none; overflow: hidden; background: var(--carte); }
+.pst-dossiers, .pst-liste { overflow: auto; border-right: 1px solid var(--bord); padding: 6px; }
+.pst-message { overflow: auto; max-height: none; min-height: 0; }
+.pst-dossier, .pst-ligne { display: flex; width: 100%; border: 0; border-radius: 6px; background: none; text-align: left; }
+.pst-dossier { justify-content: space-between; gap: 6px; padding: 5px 8px; font-size: 13px; }
+.pst-dossier small { color: var(--doux); }
+.pst-ligne { flex-direction: column; padding: 7px 9px; gap: 1px; border-bottom: 1px solid var(--bord); border-radius: 0; }
+.pst-ligne b { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
+.pst-ligne span, .pst-ligne small { font-size: 12px; color: var(--doux); }
+.pst-dossier.actif, .pst-ligne.actif { background: var(--accent-doux); }
+.pst-titre { font-weight: 600; padding: 4px 6px 8px; }
+.pst-titre small { color: var(--doux); font-weight: 400; }
+.pst-nav { display: flex; justify-content: space-between; gap: 8px; padding: 8px 4px; }
+.pst-actions { display: flex; gap: 8px; padding: 10px 20px 0; flex-wrap: wrap; }
+@media (max-width: 800px) {
+  .apercu.pst { grid-template-columns: 1fr; height: auto; overflow: visible; }
+  .pst-dossiers, .pst-liste { max-height: 260px; border-right: 0; border-bottom: 1px solid var(--bord); }
+}
+
+.bas { text-align: center; color: var(--doux); font-size: 12px; padding: 16px; }
+
+@media (max-width: 640px) {
+  .marque h1 { font-size: 22px; }
+  .cadenas { white-space: normal; }
+  .actions button { flex: 1 1 auto; }
+}
+
+/* Impression : seul l'aperçu est imprimé (« Enregistrer au format PDF ») */
+@media print {
+  body.impression > :not(main), body.impression main > :not(#panneau), body.impression .barre, body.impression .etat,
+  body.impression .onglets, body.impression .pj, body.impression .pst-dossiers, body.impression .pst-liste,
+  body.impression .pst-actions, body.impression .integrees button, body.impression details { display: none !important; }
+  body.impression .apercu.pst { display: block; height: auto; }
+  body.impression .page-texte { box-shadow: none; margin: 0; padding: 0; }
+  body.impression, body.impression main, body.impression .panneau { background: #fff !important; border: 0; padding: 0; margin: 0; max-width: none; }
+  body.impression .apercu { max-height: none; overflow: visible; background: #fff !important; min-height: 0; }
+  body.impression .docx-wrapper { background: #fff !important; padding: 0 !important; }
+  body.impression .docx-wrapper > section.docx { box-shadow: none !important; margin: 0 auto !important; page-break-after: always; }
+  body.impression .apercu.texte pre { background: #fff; color: #000; }
+  body.impression .feuille td { border-color: #999; }
+  body.impression .mail { color: #000; background: #fff; }
+}
